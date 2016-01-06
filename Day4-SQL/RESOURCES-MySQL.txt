@@ -1,0 +1,17 @@
+## MYSQL ##
+
+1. MySQL Data Types
+http://www.tutorialspoint.com/mysql/mysql-data-types.htm
+
+2. MySQL Tutorial - TutorialsPoint
+http://www.tutorialspoint.com/mysql/
+
+3. MySQL Tutorial - W3schools
+http://www.w3schools.com/sql/
+
+4. MySQL Tutorial - MySQL
+http://dev.mysql.com/doc/refman/5.7/en/tutorial.html
+
+5. Basic MySQL Tutorial
+http://www.mysqltutorial.org/basic-mysql-tutorial.aspx
+

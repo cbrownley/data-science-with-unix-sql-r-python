@@ -1,0 +1,19 @@
+## SQLITE AND SQLITE3 COMMAND LINE UTILITY ##
+
+1. SQLite Documentation
+https://www.sqlite.org/docs.html
+
+2. SQLite3 Command Line Utility
+https://www.sqlite.org/cli.html
+
+3. SQLite SQL Syntax
+https://www.sqlite.org/lang.html
+
+4. SQLite Data Types
+https://www.sqlite.org/datatype3.html
+
+5. SQLite Tutorial - TutorialsPoint
+http://www.tutorialspoint.com/sqlite/
+
+6. SQLite Tutorial - TechOnTheNet
+http://www.techonthenet.com/sqlite/

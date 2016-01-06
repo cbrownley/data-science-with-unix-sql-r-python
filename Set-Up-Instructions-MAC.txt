@@ -1,0 +1,186 @@
+## MAC ##
+
+## INSTALL ITERM ##
+
+1. Go to: https://www.iterm2.com/downloads.html
+
+2. Click on the latest stable release to download it (e.g. iTerm2 2.1.4)
+
+3. Go to your Downloads folder
+
+4. Double-click on the downloaded zip file to unzip it (e.g. iTerm2-2_1_4.zip)
+
+5. Drag the iTerm application to your Applications folder
+
+
+
+## INSTALL XCODE AND COMMAND LINE TOOLS ##
+
+SOURCE: http://railsapps.github.io/xcode-command-line-tools.html
+
+1. Check if the full XCode package is already installed
+
+1a. Open an iTerm or Terminal window
+
+1b. Type the following and hit Enter: xcode-select -p
+
+If you see something like: /Applications/Xcode.app/Contents/Developer
+
+then the full XCode package is already installed and you're good to go.
+
+
+2. If XCode and Command Line Tools aren't already installed
+
+2a. Type the following and hit Enter: gcc
+
+You'll see an alert box inviting you to "Install"
+
+2b. Click "Install"
+
+
+3. Verify you installed XCode and Command Line Tools
+
+3a. Type the following and hit Enter: xcode-select -p
+
+You should see something like: /Applications/Xcode.app/Contents/Developer
+
+3b. Type the following and hit Enter: gcc --version
+
+
+
+## INSTALL MYSQL COMMUNITY SERVER ##
+
+1. Go to: https://dev.mysql.com/downloads/mysql/
+
+2. Scroll down to the Generally Available (GA) Releases
+
+3. Click the "Download" button for the DMG version (e.g. Mac OS X 10.10 (x86, 64-bit), DMG Archive)
+
+4. Double-click the downloaded application to begin the installation
+
+5. Follow the DMG's installation instructions
+
+
+
+## INSTALL R ##
+
+1. Go to: https://cran.r-project.org/bin/macosx/
+
+2. Click the top link to download the latest package version (e.g. R-3.2.2.pkg)
+
+3. Double-click the downloaded application to begin the installation
+
+4. Follow the package's installation instructions
+
+
+
+## INSTALL XQUARTZ ##
+
+1. Go to: http://www.xquartz.org
+
+2. Click the top link to download the latest DMG (e.g. XQuartz-2.7.8.dmg)
+
+3. Double-click the downloaded application to begin the installation
+
+4. Follow the DMG's installation instructions
+
+
+
+## INSTALL RSTUDIO ##
+
+1. Go to: https://www.rstudio.com/products/rstudio/download/
+
+2. Click the link for the Mac OS X installer (e.g. RStudio 0.99.489 - Mac OS X 10.6+ (64-bit))
+
+3. Double-click the downloaded application to begin the installation
+
+4. Follow the installer's installation instructions
+
+
+
+## INSTALL ANACONDA PYTHON ##
+
+1. Go to: https://www.continuum.io/downloads#_macosx
+
+2. Click the Python 3.5 Mac OS X Graphical Installer to download the Python 3.5 package installer 
+
+3. Double-click the downloaded application to begin the installation
+
+4. Follow the installer's installation instructions
+
+
+
+## INSTALL CSVKIT AND UTILITIES AND CREATE ALIASES ##
+
+# INSTALL CSVKIT #
+1. Open an iTerm or Terminal window
+
+2. Type the following and hit Enter: conda install csvkit
+
+# INSTALL UTILITIES #
+1. Open an iTerm or Terminal window
+
+2. Navigate to the Data-Science-with-Unix-SQL-R-Python folder by typing something like the following and hitting Enter:
+cd Documents/Data-Science-with-Unix-SQL-R-Python
+
+3. Copy all of the utilities into your usr/local/bin folder by typing something like the following and hitting Enter: 
+cp Utilities/* /usr/local/bin/
+
+# Create aliases to the utilities in your .bash_profile file #
+1. Open an iTerm or Terminal window
+
+2. Type the following and hit Enter: emacs .bash_profile
+
+3. Copy and paste the following aliases into the file:
+
+alias body='/usr/local/bin/body'
+alias csvclean='/usr/local/bin/csvclean'
+alias csvcut='/usr/local/bin/csvcut'
+alias csvformat='/usr/local/bin/csvformat'
+alias csvgrep='/usr/local/bin/csvgrep'
+alias csvjoin='/usr/local/bin/csvjoin'
+alias csvjson='/usr/local/bin/csvjson'
+alias csvlook='/usr/local/bin/csvlook'
+alias csvpy='/usr/local/bin/csvpy'
+alias csvsort='/usr/local/bin/csvsort'
+alias csvsql='/usr/local/bin/csvsql'
+alias csvstack='/usr/local/bin/csvstack'
+alias csvstat='/usr/local/bin/csvstat'
+alias in2csv='/usr/local/bin/in2csv'
+alias Rio='/usr/local/bin/Rio'
+alias sql2csv='/usr/local/bin/sql2csv'
+
+4. Save and close the file by typing the following four key combinations in sequence:
+control-x THEN control-s THEN control-x THEN control-c
+
+
+
+## CHECK THAT YOU HAVE SQLITE/SQLITE3 ##
+
+1. Open an iTerm or Terminal window
+
+2. Type the following and hit Enter: sqlite3
+
+You should see the SQLite version and sqlite prompt in the window
+
+3. Type the following and hit Enter to exit sqlite: .q
+
+
+
+## CHECK THAT YOU HAVE PERL ##
+
+1. Open an iTerm or Terminal window
+
+2. Type the following and hit Enter: perl -e 'print "Hello Mr Euler!\n"'
+
+You should see Hello Mr Euler! printed to the screen
+
+
+
+## CHECK THAT YOU HAVE AWK ##
+
+1. Open an iTerm or Terminal window
+
+2. Type the following and hit Enter: awk 'BEGIN { print "Hello Mr Euler!" }'
+
+You should see Hello Mr Euler! printed to the screen

@@ -1,0 +1,39 @@
+## PYTHON, CSV, AND PANDAS ##
+
+## PYTHON AND CSV MODULE ##
+
+1. Anaconda Python Distribution Documentation and Installing Packages
+http://docs.continuum.io/anaconda/index
+http://conda.pydata.org/docs/test-drive.html
+
+2. Python Documentation and Installing Packages
+https://docs.python.org/3/
+https://docs.python.org/3/installing/index.html
+
+3. Python Tutorial
+https://docs.python.org/3/tutorial/index.html
+
+4. Python Standard Library
+https://docs.python.org/3/library/index.html
+
+5. CSV Module
+https://docs.python.org/3/library/csv.html
+
+
+
+## PANDAS PACKAGE ##
+
+1. Package Overview
+http://pandas.pydata.org/pandas-docs/version/0.17.0/overview.html
+
+2. 10 Minutes to Pandas
+http://pandas.pydata.org/pandas-docs/version/0.17.0/10min.html
+
+3. Pandas Tutorials
+http://pandas.pydata.org/pandas-docs/version/0.17.0/tutorials.html
+
+4. Pandas Input/Output (IO) Tools
+http://pandas.pydata.org/pandas-docs/version/0.17.0/io.html
+
+5. Pandas Plotting Tools
+http://pandas.pydata.org/pandas-docs/version/0.17.0/visualization.html

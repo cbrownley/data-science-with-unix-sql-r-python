@@ -1,0 +1,176 @@
+## WINDOWS ##
+
+## DETERMINE IF YOUR COMPUTER IS 32-BIT OR 64-BIT ##
+
+1. Go to: http://windows.microsoft.com/en-us/windows7/find-out-32-or-64-bit
+
+2. Follow the instructions to determine if your computer is 32-bit or 64-bit
+
+
+
+## INSTALL CYGWIN ##
+
+1. Go to: https://cygwin.com/install.html
+
+2. If your computer is 32-bit, click the 32-bit set-up executable (e.g. setup-x86.exe)
+
+2. If your computer is 64-bit, click the 64-bit set-up executable (e.g. setup-x86_64.exe)
+
+3. Follow the default set-up instructions
+Note: After you install Cygwin, you re-run the same setup-x86.exe or setup-x86_64.exe executable to check your installation and to add / remove items
+(On the “Select Packages” page, make sure the following items are installed or will be installed.  By default, they should be, but it’s good to check.  Also, don’t simply try to install everything…it will take forever to install everything and you don’t need everything.  Also, other items will be installed by default and that’s fine.)
+
+Admin > cron
+Base > bash
+Base > cygwin
+Base > gawk
+Base > grep
+Base > sed
+Database > sqlite3
+Devel (all of the default items)
+Editors > emacs
+Editors > nano
+Editors > vim
+Graphics > gnuplot
+Graphics > ImageMagick
+Interpreters > emacs
+Interpreters > gawk
+Interpreters > idle
+Interpreters > perl
+Interpreters > python
+Math > bc
+Math > lapack
+Math > libopenblas
+Math > R
+Net > curl
+Perl > perl
+Python > python
+Shells > bash
+Shells > xterm
+Utils > time
+Utils > tree
+
+
+
+## INSTALL MYSQL COMMUNITY SERVER ##
+
+1. Go to: https://dev.mysql.com/downloads/mysql/
+
+3. Click the "Download" button for the All-In-One MySQL Installer (e.g. Windows (x86, 32-bit), MySQL Installer MSI)
+
+4. Double-click the downloaded application to begin the installation
+
+5. Follow the installer's installation instructions
+
+
+
+## INSTALL R ##
+
+1. Go to: https://cran.r-project.org/bin/windows/base/
+
+2. Click the top link to download the latest package version (e.g. Download R 3.2.2 for Windows)
+
+3. Double-click the downloaded application to begin the installation
+
+4. Follow the installer's installation instructions
+
+
+
+## INSTALL RSTUDIO ##
+
+1. Go to: https://www.rstudio.com/products/rstudio/download/
+
+2. Click the link for the Windows installer (e.g. RStudio 0.99.489 - Windows Vista/7/8/10)
+
+3. Double-click the downloaded application to begin the installation
+
+4. Follow the installer's installation instructions
+
+
+
+## INSTALL ANACONDA PYTHON ##
+
+1. Go to: https://www.continuum.io/downloads#_windows
+
+2. Click the Python 3.5 Windows Graphical Installer to download the Python 3.5 package installer 
+
+3. Double-click the downloaded application to begin the installation
+
+4. Follow the installer's installation instructions
+
+
+
+## INSTALL CSVKIT AND UTILITIES AND CREATE ALIASES ##
+
+# INSTALL CSVKIT #
+1. Open an iTerm or Terminal window
+
+2. Type the following and hit Enter: conda install csvkit
+
+# INSTALL UTILITIES #
+1. Open a Cygwin window
+
+2. Navigate to the Data-Science-with-Unix-SQL-R-Python folder by typing something like the following and hitting Enter:
+cd Documents/Data-Science-with-Unix-SQL-R-Python
+
+3. Copy all of the utilities into your usr/local/bin folder by typing something like the following and hitting Enter: 
+cp Utilities/* /usr/local/bin/
+
+# Create aliases to the utilities in your .bash_profile file #
+1. Open a Cygwin window
+
+2. Type the following and hit Enter: emacs .bash_profile
+
+3. Copy and paste the following aliases into the file:
+
+alias body='/usr/local/bin/body'
+alias csvclean='/usr/local/bin/csvclean'
+alias csvcut='/usr/local/bin/csvcut'
+alias csvformat='/usr/local/bin/csvformat'
+alias csvgrep='/usr/local/bin/csvgrep'
+alias csvjoin='/usr/local/bin/csvjoin'
+alias csvjson='/usr/local/bin/csvjson'
+alias csvlook='/usr/local/bin/csvlook'
+alias csvpy='/usr/local/bin/csvpy'
+alias csvsort='/usr/local/bin/csvsort'
+alias csvsql='/usr/local/bin/csvsql'
+alias csvstack='/usr/local/bin/csvstack'
+alias csvstat='/usr/local/bin/csvstat'
+alias in2csv='/usr/local/bin/in2csv'
+alias Rio='/usr/local/bin/Rio'
+alias sql2csv='/usr/local/bin/sql2csv'
+
+4. Save and close the file by typing the following four key combinations in sequence:
+control-x THEN control-s THEN control-x THEN control-c
+
+
+
+## CHECK THAT YOU HAVE SQLITE/SQLITE3 ##
+
+1. Open a Cygwin window
+
+2. Type the following and hit Enter: sqlite3
+
+You should see the SQLite version and sqlite prompt in the window
+
+3. Type the following and hit Enter to exit sqlite: .q
+
+
+
+## CHECK THAT YOU HAVE PERL ##
+
+1. Open a Cygwin window
+
+2. Type the following and hit Enter: perl -e 'print "Hello Mr Euler!\n"'
+
+You should see Hello Mr Euler! printed to the screen
+
+
+
+## CHECK THAT YOU HAVE AWK ##
+
+1. Open a Cygwin window
+
+2. Type the following and hit Enter: awk 'BEGIN { print "Hello Mr Euler!" }'
+
+You should see Hello Mr Euler! printed to the screen

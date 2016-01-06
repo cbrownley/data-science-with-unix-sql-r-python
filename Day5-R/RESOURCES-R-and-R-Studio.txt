@@ -1,0 +1,38 @@
+## R AND R STUDIO ##
+
+## R ##
+
+1. Intro to R - Quick-R
+http://www.statmethods.net/index.html
+
+2. The Comprehensive R Archive Network (CRAN)
+https://cran.r-project.org
+
+3. R Manuals
+https://cran.r-project.org
+
+4. An Intro to R
+https://cran.r-project.org/doc/manuals/r-release/R-intro.html
+
+5. R Tutorial
+http://www.cyclismo.org/tutorial/R/index.html
+
+6. Advanced R
+http://adv-r.had.co.nz
+
+7. Examples on RPubs
+https://rpubs.com
+
+
+## R STUDIO ##
+
+1. R Studio
+https://www.rstudio.com/products/rstudio/
+
+2. R Studio Packages
+https://www.rstudio.com/products/rpackages/
+
+3. R Studio Tutorials
+https://www.rstudio.com/resources/training/online-learning/
+
+

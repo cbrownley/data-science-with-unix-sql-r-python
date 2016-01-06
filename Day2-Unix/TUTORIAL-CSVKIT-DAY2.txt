@@ -1,0 +1,212 @@
+csvkit is a suite of utilities for converting to and working with CSV.
+csvkit is to tabular data what the standard Unix text processing suite (grep, sed, cut, sort) is to text.
+http://csvkit.readthedocs.org/en/stable/index.html#
+
+
+USAGE
+Input
+in2csv, sql2csv
+
+Processing
+csvclean, csvcut, csvgrep, csvjoin, csvsort, csvstack
+
+Output (and Analysis)
+csvformat, csvjson, csvlook, csvpy, csvsql, csvstat
+
+
+
+INSTALLATION
+Do you have pip?
+which pip
+1. Install pip
+Go to: https://pip.pypa.io/en/latest/installing.html
+Download get-pip.py
+cd /Users/[your name]/Downloads
+sudo python get-pip.py
+cd
+
+2. Use pip to install csvkit
+cd
+sudo pip install csvkit
+
+
+
+***TUTORIAL***
+# Lines that start with a # are comments
+
+Open a Terminal window
+
+# MOVE INTO INPUT_FILES FOLDER
+cd /DataScience/Day2-Unix/input_files
+
+
+
+# CONVERT EXCEL INTO CSV
+in2csv ne_1033_data.xlsx > nebraska.csv
+
+
+
+# REVIEW THE COLUMN HEADINGS
+csvcut -n nebraska.csv
+
+# Unix Version
+head -1 nebraska.csv | tr "," "\n"
+
+
+
+# DESCRIPTIVE STATISTICS
+csvcut -c county,acquisition_cost,ship_date nebraska.csv | csvstat
+
+
+
+# PIPE COMMANDS TOGETHER
+in2csv ne_1033_data.xlsx | csvcut -c county,item_name,quantity | csvlook | head
+
+
+
+# SELECT SPECIFIC COLUMNS BY POSITION
+csvcut -c 2,5,6 nebraska.csv | csvlook | head
+
+# Unix Versions (The two cut commands mess up the columns because of an embedded comma)
+cut -d',' -f2,5,6 nebraska.csv | head
+cut -d',' -f2,5,6,7 nebraska.csv | head
+# Delete the embedded comma with Perl -- THESE WORK!
+perl -pe 's/"([^"]+)"/($match = $1) =~ (s:,: :g);$match;/ge;' nebraska.csv | cut -d"," -f2,5,6 | head
+OR
+perl -pe 's/"(.+?[^\\])"/($match = $1) =~ (s#,# #g); $match/ge' nebraska.csv | cut -d"," -f2,5,6 | head
+# Alternatively, delete the embedded comma with AWK  -- THIS WORKS!
+awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", " ", $i) } 1' nebraska.csv | cut -d"," -f2,5,6 | head
+
+
+
+# SELECT SPECIFIC COLUMNS BY NAME (A Unix version to use column headings instead of positions would be complex)
+csvcut -c county,item_name,quantity nebraska.csv | csvlook | head
+
+
+
+# SELECTING SPECIFIC ROWS
+csvcut -c county,item_name,total_cost nebraska.csv | csvgrep -c county -m LANCASTER | csvlook
+
+# Unix Versions (The cut command messes up the columns and the Perl command doesn't show the header row)
+cut -d"," -f2,5,9 nebraska.csv | grep LANCASTER
+perl -pe 's/"(.+?[^\\])"/($match = $1) =~ (s#,# #g); $match/ge' nebraska.csv | cut -d"," -f2,5,9 | grep LANCASTER
+# Alternatively with AWK
+awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", " ", $i) } 1' nebraska.csv | cut -d"," -f2,5,9 | grep LANCASTER
+
+
+
+# SORTING RESULTS
+csvcut -c county,item_name,total_cost nebraska.csv | csvgrep -c county -m LANCASTER | csvsort -c total_cost -r | csvlook
+
+# Unix Versions (The cut command messes up the columns and the Perl command doesn't show the header row)
+cut -d"," -f2,5,9 nebraska.csv | grep LANCASTER | sort -t"," -k3 -n -r 
+perl -pe 's/"(.+?[^\\])"/($match = $1) =~ (s#,# #g); $match/ge' nebraska.csv | cut -d"," -f2,5,9 | grep LANCASTER | sort -t"," -k3 -n -r 
+# Alternatively with AWK
+awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", " ", $i) } 1' nebraska.csv | cut -d"," -f2,5,9 | grep LANCASTER | sort -t"," -k3 -n -r 
+
+
+
+***ADDITIONAL CAPABILITIES***
+
+# GET ANOTHER DATA SET
+curl -L -O https://github.com/onyxfish/csvkit/raw/master/examples/realdata/acs2012_5yr_population.csv
+
+
+
+# DESCRIPTIVE STATISTICS
+csvstat acs2012_5yr_population.csv
+
+
+
+# JOIN TWO DATA SETS ON A COLUMN
+# Check the column headings in the two files
+csvcut -n nebraska.csv
+csvcut -n acs2012_5yr_population.csv
+# Join the two files on the fips column
+csvjoin -c fips nebraska.csv acs2012_5yr_population.csv > csvkit_joined.csv
+# Check the column headings in the joined file
+csvcut -n csvkit_joined.csv
+
+# Unix Version (The Unix version requires 3 complex operations; 5 if you also count deleting the two temporary sorted files)
+perl -pe 's/"(.+?[^\\])"/($match = $1) =~ (s#,# #g); $match/ge' nebraska.csv | sort -t"," -k3 -n > sorted_data.csv
+perl -pe 's/"(.+?[^\\])"/($match = $1) =~ (s#,# #g); $match/ge' acs2012_5yr_population.csv | sort -t"," -k1 -n > sorted_population.csv
+# Alternatively: awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", " ", $i) } 1' nebraska.csv | sort -t"," -k3 -n > sorted_data.csv
+# Alternatively: awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", " ", $i) } 1' acs2012_5yr_population.csv | sort -t"," -k1 -n > sorted_population.csv
+join -1 3 -2 1 -o '1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 1.10 1.11 1.12 1.13 1.14 2.1 2.2 2.3 2.4' -t',' sorted_data.csv sorted_population.csv > unix_joined.csv
+rm sorted_data.csv
+rm sorted_population.csv
+
+
+
+# CONCATENATE DATA FROM MULTIPLE FILES WITH IDENTICAL HEADERS
+# Get another data set: ks_1033_data.csv
+in2csv ks_1033_data.xlsx > kansas.csv
+# Check the number of rows in the two files
+wc -l nebraska.csv
+wc -l kansas.csv
+# Stack the two files into one file
+csvstack nebraska.csv kansas.csv > csvkit_two_states.csv
+# Alternatively: csvstack -g 1st_file,2nd_file -n "source_file" nebraska.csv kansas.csv > csvkit_two_states.csv
+# Alternatively: csvstack --filenames nebraska.csv kansas.csv > csvkit_two_states.csv
+csvstat -c state,acquisition_cost csvkit_two_states.csv
+
+# Unix Version
+cat nebraska.csv > unix_two_states.csv
+grep -v fips kansas.csv | cat >> unix_two_states.csv
+
+
+
+# SQL COMMANDS
+# Insert data into a sqlite database in your current folder
+csvsql --db sqlite:///csvkit_joined.db --insert csvkit_joined.csv
+
+
+# Query the database you created
+sql2csv --db sqlite:///csvkit_joined.db --query "SELECT * FROM csvkit_joined"
+sql2csv --db sqlite:///csvkit_joined.db --query "SELECT * FROM csvkit_joined WHERE county='DOUGLAS';" > douglas_county.csv
+
+
+# You don't even have to bother creating a database!
+csvsql --query "SELECT county,item_name,quantity FROM csvkit_joined WHERE quantity > 5 ORDER BY quantity DESC;" csvkit_joined.csv | csvlook
+
+
+
+# CREATE JSON
+csvjson --indent 4 --key fips acs2012_5yr_population.csv | head -12
+csvcut -c county,item_name nebraska.csv | csvgrep -c county -m "GREELEY" | csvjson --indent 4
+
+
+
+# LOAD DATA INTO PYTHON
+# Example 1: Print to screen
+csvpy nebraska.csv
+header = reader.next()
+for row in reader:
+	quantity = float(row[5])
+	if quantity > 5.0:
+		print row
+
+exit()
+
+
+# Example 2: Write to CSV output file
+csvpy nebraska.csv
+import csv
+filewriter = csv.writer(open('greater_than_five.csv', 'wb'))
+header = reader.next()
+filewriter.writerow(header)
+for row in reader:
+	quantity = float(row[5])
+	if quantity > 5.0:
+		filewriter.writerow(row)
+
+exit()
+wc -l greater_than_five.csv
+head greater_than_five.csv
+
+
+
+# CLEAN A CSV INPUT FILE OF COMMON SYNTAX ERRORS
+# If you don't include -n, csvclean creates two output files, one with valid rows and one with error rows
+# Get another data set: bad_file.csv  **NEED TO EMAIL TO PEOPLE**
+csvclean -n bad_file.csv

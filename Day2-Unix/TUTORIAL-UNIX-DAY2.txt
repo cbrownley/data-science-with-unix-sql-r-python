@@ -1,0 +1,222 @@
+## SHELL SCRIPTS ##
+
+## EXAMPLE 1 ##
+## List the contents of your Documents folder in a Terminal window ##
+
+Open an empty text document in TextMate, TextEdit, or another text editor (e.g. vi or emacs)
+
+Copy and paste the following two lines into the document:
+
+#!/bin/bash
+ls /Users/[your name]/Documents/ # e.g. ls /Users/clinton/Documents/
+
+Save the script on your Desktop as "ls_documents.sh"
+
+Open a Terminal window
+
+Type the following and then hit Enter (To move to your Desktop): cd /Users/[your name]/Desktop # e.g. cd /Users/clinton/Desktop/
+
+Type the following and then hit Enter (To make the script executable): chmod 755 ls_documents.sh
+
+Type the following and then hit Enter (To run the script): ./ls_documents.sh
+
+**You should now see the contents of your Documents folder displayed in your Terminal window**
+
+
+
+## Example 2 ##
+## Create variables and format dates ##
+
+Open an empty text document in TextMate, TextEdit, or another text editor (e.g. vi or emacs)
+
+Copy and paste the following lines into the document:
+
+#!/bin/bash
+
+date
+
+date +'%m-%d-%Y'
+
+# $() is command substitution
+# In this case, instead of displaying the output of the "date" command
+# in the Terminal window, assign the output of the command to four variables
+today1=$(date +'%F')
+today2=$(date +'%m/%d/%Y')
+
+yesterday1=$(date -v-1d +'%F')
+yesterday2=$(date -v-1d +'%m/%d/%Y')
+
+echo "Today1: $today1."
+echo "Today2: $today2."
+echo "Yesterday1: $yesterday1."
+echo "Yesterday2: $yesterday2."
+
+Save the script on your Desktop as "variables_and_dates.sh"
+
+Open a Terminal window
+
+Type the following and then hit Enter (To move to your Desktop): cd /Users/[your name]/Desktop # e.g. cd /Users/clinton/Desktop/
+
+Type the following and then hit Enter (To make the script executable): chmod 755 variables_and_dates.sh
+
+Type the following and then hit Enter (To run the script): ./variables_and_dates.sh
+
+**You should now see the following displayed in your Terminal window (Note: the dates displayed depend on when you run the script):**
+Thu Aug 21 09:18:01 PDT 2014
+08-21-2014
+Today1: 2014-08-21.
+Today2: 08/21/2014.
+Yesterday1: 2014-08-20.
+Yesterday2: 08/20/2014.
+
+
+
+## Example 3 ##
+## Pass arguments to a Bash script ##
+
+Open an empty text document in TextMate, TextEdit, or another text editor (e.g. vi or emacs)
+
+Copy and paste the following lines into the document:
+
+#!/bin/bash
+# use predefined variables to access passed arguments
+#echo arguments to the Terminal window
+echo First argument: $1
+echo Second argument: $2
+echo Third argument: $3
+echo Fourth argument: $4
+
+# store arguments from bash command line in special array
+args=("$@")
+#echo arguments to the Terminal window
+echo Accessing individual array elements: ${args[0]} ${args[1]} ${args[2]} ${args[3]}
+
+#use $@ to print out all arguments at once
+echo All arguments at once: $@
+
+# use $# variable to print out the
+# number of arguments passed to the bash script
+echo Number of arguments passed: $#
+
+Save the script on your Desktop as "pass_args_to_script.sh"
+
+Open a Terminal window
+
+Type the following and then hit Enter (To move to your Desktop): cd /Users/[your name]/Desktop # e.g. cd /Users/clinton/Desktop/
+
+Type the following and then hit Enter (To make the script executable): chmod 755 pass_args_to_script.sh
+
+Type the following and then hit Enter (To run the script): ./pass_args_to_script.sh My name is [your name] # e.g. ./pass_args_to_script.sh My name is Clinton
+
+**You should now see the following output displayed in your Terminal window:**
+First argument: My
+Second argument: name
+Third argument: is
+Fourth argument: Clinton
+Accessing individual array elements: My name is Clinton
+All arguments at once: My name is Clinton
+Number of arguments passed: 4
+
+
+
+## Example 4 ##
+## SQLite Querying, Conditional Logic, and Email Notifications ##
+
+Use vi or emacs to create an empty text document called "query_db_and_email.sh":
+e.g. vi query_db_and_email.sh
+e.g. emacs query_db_and_email.sh
+
+Copy and paste the following lines into the document:
+
+#!/bin/bash
+
+START_TIME=$(date +%s)
+
+TODAY=$(date +'%F')
+
+echo "observation,sepal_length,sepal_width,petal_length,petal_width,species" > output_files/iris_from_sqlite_"$TODAY".csv
+
+# create and query a sqlite database table and save the output in a file
+sqlite3 input_files/DataScience.db >> output_files/iris_from_sqlite_"$TODAY".csv <<EndOfScript
+	SELECT * FROM iris;
+EndOfScript
+
+perl -i -pe 's/\|/,/g' output_files/iris_from_sqlite_"$TODAY".csv
+
+END_TIME=$(date +%s)
+
+# $? refers to the exit status of the previous command
+# 0 is success; failure statuses range from 1 to 255
+# therefore the if statement says, if error code is not equal to success
+# everything between <<MESSAGE and MESSAGE is a Here Document
+# $(()) syntax carries out the calculation and supplies the result of the calculation
+if [ $? -ne 0 ]
+then
+`mail -s "Data Pull Failed" clinton@clinton-mba.local << MESSAGE
+The data pull failed on $TODAY.
+MESSAGE`
+else
+`mail -s "Data Pull Success" clinton@clinton-mba.local << MESSAGE
+The data pull completed successfully on $TODAY.
+The process took $(($(($END_TIME - $START_TIME))/60)) minutes and $(($(($END_TIME - $START_TIME))%60)) seconds.
+MESSAGE`
+fi
+
+
+Save and close the script:
+- In vi, type the following and then hit Enter: 'esc', then ':wq'
+- In emacs, type the following and then hit Enter: control-x, control-s, control-x, control-c
+
+Type the following and then hit Enter (To make the script executable): chmod 755 query_db_and_email.sh
+
+Type the following and then hit Enter (To run the script): ./query_db_and_email.sh
+
+**You should receive an email saying the data pull succeeded:**
+In additional, there should be a new file in output_files called iris_from_sqlite_"$TODAY".csv # e.g. output_files/iris_from_sqlite_2015-01-10.csv
+
+Look at the number of rows in the file: wc -l output_files/iris_from_sqlite_2015-01-10.csv
+
+Look at the first few rows in the file: head output_files/iris_from_sqlite_2015-01-10.csv
+
+
+
+
+## CRON JOBS ##
+
+## Create and Edit Cron Jobs ##
+One-time Set-up:
+Create a file to load to Crontab: touch crontab_file.txt
+Load the file to Crontab: crontab crontab_file.txt
+Delete the file: rm crontab_file.txt
+
+
+## Add Cron Jobs to Crontab ##
+Type the following and then hit Enter: crontab -e
+
+Add a job (ADD A NEWLINE AFTER THE LAST JOB LINE!):
+Example #1: (Run hello.py every minute of every day)
+* * * * * /Users/clinton/Desktop/hello.py
+
+Example #2: (Run data_pipeline.sh every day at 10:00 AM)
+00 10 * * * /Users/clinton/Desktop/data_pipeline.sh
+
+Example #3: (Run budget_report.sh every First Monday of the Month at 11:00 AM)
+00 11 1-7 * * [ "$(date '+\%a')" = "Mon" ] && /Users/clinton/Desktop/budget_report.sh
+
+
+Save and close the Crontab:
+- If using vi, type the following and then hit Enter: 'esc', then ':wq'
+- If using emacs, type the following and then hit Enter: control-x, control-s, control-x, control-c
+
+
+## View List of Cron Jobs ##
+Open a Terminal window
+Type the following and then hit Enter: cd
+Type the following and then hit Enter: crontab -l
+
+
+## View Cron Job Mail Notifications ##
+Open a Terminal window
+Type the following and then hit Enter: cd
+Type the following and then hit Enter (To exit, type 'q'): less /var/mail/[your name]   ## e.g. less /var/mail/clinton
+

@@ -1,0 +1,60 @@
+## SHELL SCRIPT, CRON JOB, AND CSVKIT RESOURCES ##
+
+## SHELL SCRIPT ##
+
+1. Bash Guide for Beginners
+http://tldp.org/LDP/Bash-Beginners-Guide/html/sect_02_01.html
+
+2. Writing a Simple Bash Script
+http://www.linux.com/learn/tutorials/284789-writing-a-simple-bash-script-
+
+3. Introductory Bash Script Tutorial
+http://linuxconfig.org/bash-scripting-tutorial
+
+4. Formatting Dates in Bash Scripts http://www.cyberciti.biz/faq/linux-unix-formatting-dates-for-display/
+
+5. Unix Exit Statuses / Error Codes
+http://tldp.org/LDP/abs/html/exit-status.html
+
+6. Here Doc Documentation
+http://tldp.org/LDP/abs/html/here-docs.html
+
+7. Here Doc Explanation http://stackoverflow.com/questions/2953081/how-can-i-write-a-here-doc-to-a-file-in-bash-script
+
+
+
+## CRON JOB ##
+
+1. Cron Overview
+http://en.wikipedia.org/wiki/Cron
+
+2. Creating Cron Jobs
+http://www.thesitewizard.com/general/set-cron-job.shtml
+
+3. Cron How To
+https://help.ubuntu.com/community/CronHowto
+
+4. Run Job Every First Monday
+http://superuser.com/questions/428807/run-a-cron-job-on-the-first-monday-of-every-month
+
+5. Cron Job Examples
+http://www.thegeekstuff.com/2009/06/15-practical-crontab-examples/
+
+
+
+## CSVKIT ##
+
+1. CSVKIT Documentation
+https://csvkit.readthedocs.org/en/0.9.1/
+
+2. CSVKIT Tutorial
+https://csvkit.readthedocs.org/en/0.9.1/tutorial.html
+
+3. CSVKIT Command Line Usage
+https://csvkit.readthedocs.org/en/0.9.1/cli.html
+
+4. Eleven Awesome Things You Can Do With CSVKIT
+https://source.opennews.org/en-US/articles/eleven-awesome-things-you-can-do-csvkit/
+
+5. CSVKit Brings the Unix Philosophy to CSV
+https://robots.thoughtbot.com/csvkit-brings-the-unix-philosophy-to-csv

@@ -1,0 +1,349 @@
+## LOG IN TO MYSQL ##
+mysql -u root -p
+mysql -u -h -P -p
+mysql -u -h -P -p DB -e "SELECT * FROM table;" | tr "\t" "," > output.csv
+
+
+## LIST EXISTING DATABASES ##
+SHOW DATABASES;
+
+
+## CREATE A NEW DATABASE ##
+CREATE DATABASE DataScience;
+
+
+## CREATE USER <YOU> ON localhost ##
+CREATE USER 'YOURNAME'@'localhost' IDENTIFIED BY 'YOURPASSWORD';
+GRANT ALL PRIVILEGES ON *.* TO 'YOURNAME'@'localhost' WITH GRANT OPTION;
+
+## CREATE USER <YOU> ON ANY HOST
+CREATE USER 'YOURNAME'@'%' IDENTIFIED BY 'YOURPASSWORD';
+GRANT ALL PRIVILEGES ON *.* TO 'YOURNAME'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+
+## CREATE USER datascientist ON localhost ##
+CREATE USER 'datascientest'@'localhost' IDENTIFIED BY 'datascientist_pswd';
+GRANT CREATE,INSERT,SELECT,UPDATE,DELETE,DROP ON DataScience.* TO 'datascientist'@'localhost' WITH GRANT OPTION;
+
+## CREATE USER datascientist ON ANY HOST ##
+CREATE USER 'datascientest'@'%' IDENTIFIED BY 'datascientist_pswd';
+GRANT CREATE,INSERT,SELECT,UPDATE,DELETE,DROP ON DataScience.* TO 'datascientist'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+
+## SHOW ALLOWED ACTIONS FOR USER ##
+SHOW GRANTS FOR 'YOURNAME'@'localhost';
+SHOW GRANTS FOR 'YOURNAME'@'%';
+SHOW GRANTS FOR 'datascientist'@'localhost';
+SHOW GRANTS FOR 'datascientist'@'%';
+
+
+## USE A SPECIFIC DATABASE ##
+USE DataScience;
+
+
+## CREATE TABLE ##
+CREATE TABLE movies (
+movie_id INT(4) NOT NULL AUTO_INCREMENT, 
+title VARCHAR(75) NOT NULL,
+year YEAR(4) NOT NULL, 
+genres VARCHAR(50) NOT NULL, 
+PRIMARY KEY movie_inx (movie_id) 
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+## INDEXING ##
+CREATE INDEX title_idx ON movies (title);
+CREATE INDEX year_idx ON movies (year);
+CREATE INDEX genres_idx ON movies (genres);
+
+
+## CREATE TABLE ##
+CREATE TABLE users (
+user_id INT(4) NOT NULL AUTO_INCREMENT, 
+gender CHAR(1) NOT NULL,
+age TINYINT(2) NOT NULL, 
+occupation TINYINT(2) NOT NULL, 
+zipcode VARCHAR(10) NOT NULL, 
+PRIMARY KEY user_inx (user_id) 
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+## INDEXING ##
+CREATE INDEX gender_idx ON users (gender);
+CREATE INDEX age_idx ON users (age);
+CREATE INDEX occupation_idx ON users (occupation);
+CREATE INDEX zipcode_idx ON users (zipcode);
+
+
+## CREATE TABLE ##
+CREATE TABLE ratings (
+user_id INT(4) NOT NULL, 
+movie_id INT(4) NOT NULL,
+rating CHAR(1) NOT NULL, 
+timestamp BIGINT NOT NULL, 
+PRIMARY KEY rating_inx (user_id, movie_id),
+FOREIGN KEY(user_id) REFERENCES users(user_id),
+FOREIGN KEY(movie_id) REFERENCES movies(movie_id)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+## INDEXING ##
+CREATE INDEX user_idx ON ratings (user_id);
+CREATE INDEX movie_idx ON ratings (movie_id);
+CREATE INDEX rating_idx ON ratings (rating);
+
+
+## LOAD CSV FILES INTO MYSQL TABLES ##
+LOAD DATA LOCAL INFILE 'movies.csv' INTO TABLE movies FIELDS TERMINATED BY ','; 
+LOAD DATA LOCAL INFILE 'users.csv' INTO TABLE users FIELDS TERMINATED BY ','; 
+LOAD DATA LOCAL INFILE 'ratings_with_movieids.csv' INTO TABLE ratings FIELDS TERMINATED BY ',';
+
+
+## SHOW INFORMATION ABOUT THE TABLES ##
+DESCRIBE movies;
+DESCRIBE users;
+DESCRIBE ratings;
+
+
+## RETRIEVING RECORDS ##
+SELECT * FROM movies LIMIT 5;
+SELECT * FROM users LIMIT 5;
+SELECT * FROM ratings LIMIT 5;
+
+SELECT movie_id, title, year, genres FROM movies LIMIT 10;
+SELECT user_id, gender, age, occupation FROM users LIMIT 10;
+SELECT user_id, movie_id, rating, FROM_UNIXTIME(timestamp) AS timestamp FROM ratings LIMIT 10;
+
+SELECT movie_id, title, year, genres FROM movies ORDER BY rand() LIMIT 10;
+
+SELECT movie_id, title, year, genres FROM movies WHERE year < 1922;
+SELECT user_id, gender, age, occupation FROM users WHERE gender = 'F' AND age > 35 AND occupation = 5;
+
+SELECT movie_id, title, year, genres FROM movies WHERE year IN (1921, 1922);
+SELECT user_id, gender, age, occupation FROM users WHERE occupation IN (2,4,6,8);
+
+SELECT movie_id, title, year, genres FROM movies WHERE title LIKE '%ing';
+SELECT movie_id, title, year, genres FROM movies WHERE title LIKE 'V%';
+SELECT movie_id, title, year, genres FROM movies WHERE genres LIKE '%Comedy%' LIMIT 15;
+
+SELECT user_id, gender, age, COALESCE(occupation, 'NA') AS coalesce_statement FROM users LIMIT 10;
+
+SELECT CONCAT(title, ' --> ', genres) AS title_and_genres FROM movies WHERE year < 1922;
+
+
+## WORKING WITH MULTIPLE TABLES ##
+# Movies from before 1926
+SELECT m.movie_id, r.user_id, m.title, r.rating
+FROM movies AS m 
+JOIN ratings AS r ON m.movie_id = r.movie_id
+WHERE m.year < 1926 
+ORDER BY r.rating DESC, m.title ASC;
+
+# Number of distinct genres rated by executives, homemakers, and K-12 students
+SELECT 
+CASE WHEN u.occupation = 7 THEN 'Executive'
+WHEN u.occupation = 9 THEN 'Homemaker'
+ELSE 'K-12 student'
+END AS occupation, COUNT(DISTINCT m.genres) AS count_of_genres
+FROM users AS u 
+JOIN ratings AS r ON u.user_id = r.user_id
+JOIN movies AS m ON r.movie_id = m.movie_id
+WHERE u.occupation IN (7,9,10)
+GROUP BY u.occupation
+ORDER BY u.occupation;
+
+# Movies in the movies table that are not in the ratings table
+SELECT movie_id, title
+FROM movies
+WHERE movie_id NOT IN (SELECT movie_id FROM ratings)
+ORDER BY title ASC;
+
+
+## SORTING RECORDS ##
+SELECT movie_id, title, year, genres 
+FROM movies 
+WHERE year < 1926 
+ORDER BY year DESC;
+
+SELECT user_id, gender, age, occupation 
+FROM users 
+WHERE age > 35 AND occupation = 5 
+ORDER BY gender ASC, age DESC;
+
+
+## CASE STATEMENTS ##
+SELECT movie_id, rating, 
+CASE WHEN rating < 3 THEN 'Bad movie'
+	 WHEN rating < 5 THEN 'Ok movie'
+     ELSE 'Great movie'
+END AS movie_evaluation
+FROM ratings
+LIMIT 25;
+
+SELECT user_id, gender, age, 
+CASE WHEN occupation IS NULL THEN 'NA'
+     ELSE occupation 
+END AS case_statement
+FROM users
+LIMIT 10;
+
+
+## NULL VALUES ##
+SELECT user_id, gender, age, occupation FROM users WHERE occupation IS NULL;
+
+SELECT movie_id, year, genres
+FROM
+(SELECT movie_id, year, genres, 
+CASE WHEN genres IS NULL THEN 0 ELSE 1
+END AS is_null
+FROM movies) AS view
+ORDER BY is_null DESC, genres
+LIMIT 25;
+
+
+## UNION VS. UNION ALL ##
+SELECT movie_id
+FROM movies
+WHERE movie_id < 11
+UNION ALL
+SELECT movie_id
+FROM ratings
+WHERE movie_id < 11;
+
+SELECT movie_id
+FROM movies
+WHERE movie_id < 11
+UNION
+SELECT movie_id
+FROM ratings
+WHERE movie_id < 11;
+
+
+## DATES ##
+SELECT NOW(), CURDATE(), CURTIME();
+
+SELECT movie_id, rating, DATE(FROM_UNIXTIME(timestamp)) AS date FROM ratings WHERE rating > 4 AND DATE(FROM_UNIXTIME(timestamp)) > '2003-02-26';
+
+SELECT movie_id, rating, 
+YEAR(FROM_UNIXTIME(timestamp)) AS year, 
+MONTH(FROM_UNIXTIME(timestamp)) AS month, 
+DAYOFMONTH(FROM_UNIXTIME(timestamp)) AS day_of_month, 
+DAYOFWEEK(FROM_UNIXTIME(timestamp)) AS day_of_week, 
+CONCAT(MONTH(FROM_UNIXTIME(timestamp)),'/', DAYOFMONTH(FROM_UNIXTIME(timestamp)),'/', YEAR(FROM_UNIXTIME(timestamp))) AS date_concat,
+DATE_FORMAT(FROM_UNIXTIME(timestamp), '%b %d %y %h:%i %p') AS date_format 
+FROM ratings WHERE rating > 4 AND DATE(FROM_UNIXTIME(timestamp)) > '2003-02-26';
+
+SELECT movie_id, rating,
+FROM_UNIXTIME(timestamp) AS timestamp,
+DATEDIFF(CURDATE(), FROM_UNIXTIME(timestamp)) AS time_since_rating_in_days,
+(DATEDIFF(CURDATE(), FROM_UNIXTIME(timestamp))/365) AS time_since_rating_in_years 
+FROM ratings WHERE rating > 4 AND DATE(FROM_UNIXTIME(timestamp)) > '2003-02-26';
+
+SELECT movie_id, rating,
+DATE(FROM_UNIXTIME(timestamp)) AS timestamp,
+DATE(DATE_ADD(FROM_UNIXTIME(timestamp), INTERVAL 2 DAY)) AS 2_days_after_rating,
+DATE(DATE_ADD(FROM_UNIXTIME(timestamp), INTERVAL 3 YEAR)) AS 3_years_after_rating 
+FROM ratings WHERE rating > 4 AND DATE(FROM_UNIXTIME(timestamp)) > '2003-02-26';
+
+
+## STRINGS ##
+SELECT SUBSTRING(title, 1, 3) AS substring
+FROM movies
+WHERE title = 'Toy Story';
+
+SELECT SUBSTRING_INDEX(title, 'o', 2) AS second_o
+FROM movies
+WHERE title = 'Toy Story';
+
+SELECT SUBSTRING(title, 5, 5) AS substring
+FROM movies
+WHERE title = 'Toy Story';
+
+# Replace one substring with another substring
+SELECT REPLACE(title, 'Toy', 'A Wonderful') AS replacement
+FROM movies
+WHERE title = 'Toy Story';
+
+# Replace one substring with another substring
+SELECT REPLACE(REPLACE(title, 'Toy', 'A Wonderful'), 'Story', 'Life') AS replacement
+FROM movies
+WHERE title = 'Toy Story';
+
+# Count occurrences of a character in a string
+SELECT ROUND((LENGTH(title)-LENGTH(REPLACE(title, 'o', ''))) / LENGTH('o'),1) AS count
+FROM movies
+WHERE title = 'Toy Story';
+
+
+## NUMBERS ##
+# Number of records per movie (includes NULL and non-NULL)
+SELECT m.title, COUNT(*) number_of_records
+FROM users AS u
+JOIN ratings AS r ON u.user_id = r.user_id
+JOIN movies AS m ON r.movie_id = m.movie_id
+GROUP BY m.title
+ORDER BY m.title;
+
+# Number of ratings per movie (includes non-NULL)
+SELECT m.title, COUNT(r.rating) number_of_ratings
+FROM users AS u
+JOIN ratings AS r ON u.user_id = r.user_id
+JOIN movies AS m ON r.movie_id = m.movie_id
+GROUP BY m.title
+ORDER BY m.title;
+
+# Sum of ratings per movie
+SELECT m.title, SUM(r.rating) sum_of_ratings
+FROM users AS u
+JOIN ratings AS r ON u.user_id = r.user_id
+JOIN movies AS m ON r.movie_id = m.movie_id
+WHERE (m.title LIKE 'X%' OR m.title LIKE 'Y%')
+GROUP BY m.title
+ORDER BY m.title;
+
+# Average rating per movie
+SELECT m.title, ROUND(AVG(r.rating), 1) AS average_rating
+FROM users AS u
+JOIN ratings AS r ON u.user_id = r.user_id
+JOIN movies AS m ON r.movie_id = m.movie_id
+WHERE (m.title LIKE 'X%' OR m.title LIKE 'Y%')
+GROUP BY m.title
+ORDER BY ROUND(AVG(r.rating), 1) DESC;
+
+# Minimum and maximum ratings per movie
+SELECT m.title, MIN(r.rating) AS min_rating, MAX(r.rating) AS max_rating
+FROM users AS u
+JOIN ratings AS r ON u.user_id = r.user_id
+JOIN movies AS m ON r.movie_id = m.movie_id
+WHERE (m.title LIKE 'X%' OR m.title LIKE 'Y%')
+GROUP BY m.title
+ORDER BY m.title;
+
+# Mode rating for movies that start with X and Y
+SELECT r.rating AS mode_rating
+FROM users AS u
+JOIN ratings AS r ON u.user_id = r.user_id
+JOIN movies AS m ON r.movie_id = m.movie_id
+WHERE (m.title LIKE 'X%' OR m.title LIKE 'Y%')
+GROUP BY r.rating
+HAVING COUNT(*) >= ALL(SELECT COUNT(*) 
+FROM users AS u
+JOIN ratings AS r ON u.user_id = r.user_id
+JOIN movies AS m ON r.movie_id = m.movie_id
+WHERE (m.title LIKE 'X%' OR m.title LIKE 'Y%')
+GROUP BY r.rating);
+
+# Median rating for movies that start with X and Y
+SELECT AVG(rating) AS median_rating
+FROM
+(SELECT a.rating
+FROM ratings a 
+JOIN ratings b ON a.user_id = b.user_id
+JOIN users AS u ON u.user_id = a.user_id
+JOIN movies AS m ON a.movie_id = m.movie_id 
+AND (m.title LIKE 'X%' OR m.title LIKE 'Y%')
+GROUP BY a.rating
+HAVING SUM(CASE WHEN a.rating = b.rating THEN 1 ELSE 0 END) >=
+ABS(SUM(SIGN(a.rating - b.rating)))
+) AS temp; 
+
+

@@ -1,0 +1,87 @@
+## DATA.TABLE, DPLYR, AND GGPLOT2 ##
+
+## DATA.TABLE ##
+
+1. Introduction to the data.table package
+https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.pdf
+
+2. data.table Documentation
+https://cran.r-project.org/web/packages/data.table/data.table.pdf
+
+3. Introductory Vignette
+https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro-vignette.html
+
+4. Keys and Fast Binary Search Vignette
+https://cran.r-project.org/web/packages/data.table/vignettes/datatable-keys-fast-subset.html
+
+5 .Reference Semantics Vignette
+https://cran.r-project.org/web/packages/data.table/vignettes/datatable-reference-semantics.html
+
+6. Efficient Data Reshaping
+https://cran.r-project.org/web/packages/data.table/vignettes/datatable-reshape.html
+
+7. data.table Cheat Sheet
+https://s3.amazonaws.com/assets.datacamp.com/img/blog/data+table+cheat+sheet.pdf
+
+
+
+## DPLYR ##
+
+1. dplyr Documentation
+https://cran.r-project.org/web/packages/dplyr/dplyr.pdf
+
+2. Introductory Vignette
+https://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html
+
+3. dplyr Quick Overview
+https://cran.r-project.org/web/packages/dplyr/README.html
+
+4. Data Frames
+https://cran.r-project.org/web/packages/dplyr/vignettes/data_frames.html
+
+5. Databases
+https://cran.r-project.org/web/packages/dplyr/vignettes/databases.html
+
+6. Two-Table Verbs
+https://cran.r-project.org/web/packages/dplyr/vignettes/two-table.html
+
+7. Window Functions and Grouped Mutate/Filter
+https://cran.r-project.org/web/packages/dplyr/vignettes/window-functions.html
+
+8. dplyr Cheat Sheet
+https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf
+
+
+
+## GGPLOT2 ##
+
+1. ggplot2 Homepage
+http://ggplot2.org
+
+2. ggplot2 Documentation
+http://docs.ggplot2.org/current/
+
+3. Graphs with ggplot2 - R Graphics Cookbook
+http://www.cookbook-r.com/Graphs/index.html
+
+4. Graphs - Quick-R
+http://www.statmethods.net/advgraphs/ggplot2.html
+
+5. ggplot Examples
+http://www.stat.wisc.edu/~larget/stat302/chap2.pdf
+
+6. Basic Introduction to ggplot2
+http://www.r-bloggers.com/basic-introduction-to-ggplot2/
+
+7. Using the ggplot2 library
+http://www.r-bloggers.com/using-the-ggplot2-library-in-r/
+
+8. Plotly ggplot2
+https://plot.ly/ggplot2/
+
+9. ggplot2 Package Documentation
+https://cran.r-project.org/web/packages/ggplot2/ggplot2.pdf
+
+10. ggplot2 Cheat Sheet
+https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf
+

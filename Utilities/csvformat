@@ -1,0 +1,270 @@
+#!/usr/bin/perl -w
+#-*-perl-*-
+
+#  Copyright 2008-2013 Google Inc.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
+use strict;
+use Getopt::Long;
+use FileHandle;
+
+my ($h, $d, $i, $o, $noescape, $show_version, $quoting, @quote_fields);
+
+$d = $ENV{DELIMITER} || chr(0xfe);
+$quoting = 'all';
+Getopt::Long::Configure( "no_ignore_case" );
+&GetOptions("help"    => \$h,
+            "delim=s"  => \$d,
+            "input=s"  => \$i,
+            "output=s"  => \$o,
+            "no-escape"  => \$noescape,
+            "Version" => \$show_version,
+	    "quoting=s" => \$quoting,
+	    "fields-to-quote=s" => \@quote_fields,
+           );
+
+if ($h) {
+  usage();
+  exit(1);
+}
+if ($show_version) {
+  crush_version();
+  exit(0);
+}
+
+my $quote_fn;
+if (@quote_fields) {
+  my $field_list = join(',', @quote_fields);
+  if ($field_list =~ /([^-,\d]+)/) {
+    die "Bad --fields-to-quote value: $1\n";
+  }
+  @quote_fields = expand_nums($field_list, -1);
+  $quote_fn = \&quote_specific
+}
+elsif ($quoting eq 'all') { $quote_fn = \&quote_all }
+elsif ($quoting eq 'none') { $quote_fn = \&quote_none }
+elsif ($quoting eq 'minimal') { $quote_fn = \&quote_minimal }
+elsif ($quoting eq 'nonnumeric') { $quote_fn = \&quote_nonnumeric }
+else  { die "Invalid --quoting value: $quoting\n"; }
+
+$d = expand_chars($d); # expand escape sequences
+
+if ((!defined($i)) && scalar(@ARGV)) {
+  $i = $ARGV[0];
+}
+
+# if input and/or output files were specified on the cmd-line, open them
+my ($IN, $OUT);
+if ($i) {
+  open(TMPIN , "< $i") or die "csvformat: $i: $!\n";
+  $IN = \*TMPIN;
+} else {
+  $IN = \*STDIN;
+}
+
+if ($o) {
+  open(TMPOUT, "> $o") or die "csvformat: $o: $!\n";
+  $OUT = \*TMPOUT;
+} else {
+  $OUT = \*STDOUT;
+}
+
+my $linebreak;
+while (<$IN>) {
+
+  # if the current line has no linebreak (e.g. on the last line of input),
+  # use the previous linebreak string if defined.
+  s/([\r\n]+)//;
+  $linebreak = $1 || $linebreak || "\n";
+
+  if (! $noescape) {
+    $_ =~ s/"/""/g;    # "escape" existing quotes
+  }
+
+  print $OUT $quote_fn->($_), $linebreak;
+}
+
+exit(0);
+
+sub quote_specific {
+  my $line = shift;
+  my @fields = split(/\Q$d\E/o, $line);
+  for my $i (@quote_fields) {
+    $fields[$i] = q(") . $fields[$i] . q(");
+  }
+  return join(',', @fields);
+}
+
+sub quote_all {
+  my $line = shift;
+  $line = q(") . $line . q(");
+  $line =~ s/\Q$d\E/","/og;
+  return $line;
+}
+
+sub quote_none {
+  my $line = shift;
+  $line =~ s/\Q$d\E/,/og;
+  return $line;
+}
+
+sub quote_nonnumeric {
+  my $line = shift;
+  my @fields = split(/\Q$d\E/o, $line);
+  for my $i (0 .. $#fields) {
+    if ($fields[$i] !~ /-?\d+(\.\d+)?/) {
+      $fields[$i] = q(") . $fields[$i] . q(");
+    }
+  }
+  return join(',', @fields);
+}
+
+sub quote_minimal {
+  my $line = shift;
+  my @fields = split(/\Q$d\E/o, $line);
+  for my $i (0 .. $#fields) {
+    if ($fields[$i] =~ /,/) {
+      $fields[$i] = q(") . $fields[$i] . q(");
+    }
+  }
+  return join(',', @fields);
+}
+
+sub usage {
+  print STDERR <<"__USAGE__";
+
+converts a delimited file to csv format.
+
+Usage: $0 [options...]
+
+Options:
+  -d, --delim <delim>        input field separator (default: 0xfe)
+  -i, --input <infile>       input file (default: stdin)
+  -o, --output <outfile>     output file (default: stdout)
+  -n, --no-escape            do not escape quotes
+  -q, --quoting <style>      field quoting style. Must be one of
+                             "all", "minimal", "nonnumeric" or "none".
+  --fields-to-quote <list>   only/always quote these specific fields. If
+                             specified, any value in --quoting is ignored.
+
+__USAGE__
+
+}
+
+=item * expand_chars
+
+expand escape sequences like '\t' in a string to their expansions.
+
+=cut
+sub expand_chars {
+  my $d = shift || return;
+  eval("sprintf(\"$d\")");
+}
+
+=item * field_str()
+
+returns the 0-based index of the first field in a delimited string equal to
+the specified value, or undef if not found.
+
+=cut
+sub field_str {
+  my $value = shift;
+  my $string = shift;
+  my $delim = shift;
+  $string =~ s/[\r\n]//g;
+  my @a = split(/\Q$delim\E/, $string);
+  my $i;
+  for $i (0 .. $#a) {
+    if ($a[$i] eq $value) {
+      return $i;
+    }
+  }
+  return undef;
+}
+
+=item * fields_in_line()
+
+Counts the number of fields in a delimited string.
+
+=cut
+sub fields_in_line {
+  my $str = shift;
+  my $delim = shift;
+  my $n = 1;
+  my $i = 0;
+  while (($i = index($str, $delim, $i)) > 0) {
+    $n++;
+    $i += length($delim);
+  }
+  return $n;
+}
+
+=item * get_line_field($line, $field_index, $delim)
+
+Get the data at position field from the delim deliminated string line.
+
+$field_index is 0 based
+
+=cut
+sub get_line_field {
+  my $pos = 0;
+  for (my $i = 0; $i < $_[1]; $i++) {
+    $pos = index($_[0], $_[2], $pos);
+    $pos++;
+  }
+  my $end_pos = index($_[0], $_[2], $pos) - $pos;
+  $end_pos = length($_[0]) - $pos if $end_pos <= 0;
+  return substr($_[0], $pos, $end_pos);
+}
+
+=item * expand_nums($arg [, $adjust])
+
+Turn a string of comma-separated numbers and number ranges into an array of
+numbers. If specified, $adjust is added to each value after expansion. E.g.,
+If turning 1-based field indexes into array indexes, pass -1 as the adjust
+value.
+
+=cut
+sub expand_nums {
+  my $arg = shift;
+  my $adjust = shift || 0;
+  my @fields = split(',', $arg);
+  my @idxs = ();
+  foreach my $f (@fields) {
+    if ($f =~ /(\d+)-(\d+)/) {
+      push(@idxs, $1 .. $2);
+    } elsif ($f =~ /\d+/) {
+      push(@idxs, $f);
+    } else {
+      use Carp;
+      croak "Invalid value in numeric list: $f";
+    }
+  }
+  if ($adjust) {
+    foreach my $i (0 .. $#idxs) {
+      $idxs[$i] += $adjust;
+    }
+  }
+  return @idxs;
+}
+
+
+1;
+
+
+sub crush_version {
+  print STDERR "CRUSH tools release 2013-04 compiled at 2015-05-18-18:41:23\n";
+}
+
+1;

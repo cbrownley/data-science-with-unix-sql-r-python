@@ -1,0 +1,227 @@
+## MOVE INTO THE INPUT_FILES DIRECTORY (A.K.A. FOLDER)
+cd /Users/clinton/Documents/DataScience/Day1-Unix/input_files
+
+
+## PRINT THE PATH OF THE DIRECTORY YOU ARE IN
+pwd
+
+
+## LIST THE FILES THAT ARE IN THE DIRECTORY 
+ls
+ls -l
+ls -la
+
+
+## FIND ALL FILES THAT END IN .CSV IN THE CURRENT DIRECTORY
+## AND ALL OF ITS SUBDIRECTORIES
+find . -type f -name "*.csv"
+find . -maxdepth 1 -type f -name "*.csv"
+
+
+## RENAME THE FILE TO MAKE IT SHORTER
+mv diamonds_Rdataset.csv diamonds.csv
+
+
+## CHANGE THE ACCESS MODE OF THE FILE
+chmod 644 diamonds.csv
+
+
+## PRINT THE NUMBER OF ROWS IN THE FILE
+wc -l diamonds.csv
+wc diamonds.csv
+
+
+## ADD A HEADING FOR THE FIRST COLUMN
+sed -i -e 's/^"",/observation,/' diamonds.csv
+
+
+## LOOK AT THE FIRST 5 ROWS IN THE FILE
+head -n 5 diamonds.csv
+sed -n '1,5p' diamonds.csv
+awk 'NR<=5' diamonds.csv
+
+
+## LOOK AT THE LAST 5 ROWS IN THE FILE
+tail -n 5 diamonds.csv
+
+
+## DELETE DOUBLE QUOTES
+tr -d '"' < diamonds.csv > temp && mv temp diamonds.csv
+sed -i -e 's/"//g' diamonds.csv
+perl -i -pe 's/"//g' diamonds.csv
+
+
+## CHANGE ONE CHARACTER INTO ANOTHER (E.G. COLUMN DELIMITER)
+tr ',' '\t' < diamonds.csv > temp && mv temp diamonds.csv
+sed -i -e $'s/\t/,/g' diamonds.csv
+perl -i -pe 's/,/\t/g' diamonds.csv
+
+
+## REMOVE THE FIRST 3 ROWS
+tail -n +4 diamonds.csv | head
+sed '1,3d' diamonds.csv | head
+sed -n '1,3!p' diamonds.csv | head
+
+
+## REMOVE THE LAST 3 ROWS
+tail -r diamonds.csv | tail -n +4 | tail -r | head
+
+
+## SELECT CONTIGUOUS ROWS (E.G. ROWS 5-10)
+sed -n '5,10p' diamonds.csv
+awk '(NR>=5)&&(NR<=10)' diamonds.csv
+head -n 10 diamonds.csv | tail -n 6
+
+
+## COUNT THE NUMBER OF LINES THAT CONTAIN IDEAL
+grep -c Ideal diamonds.csv
+
+
+## PRINT THE 21,551 LINES THAT CONTAIN IDEAL (CASE-INSENSITIVE)
+grep -i ideal diamonds.csv
+
+
+## COUNT AND PRINT LINES THAT CONTAIN A SPECIFIC PATTERN
+egrep -c "Ve.*" diamonds.csv
+egrep "Ve.*" diamonds.csv
+egrep -c "VV.*" diamonds.csv
+egrep "VV.*" diamonds.csv
+egrep -c "Ideal|Fair" diamonds.csv
+egrep "Ideal|Fair" diamonds.csv
+
+
+## PRINT LINES THAT MEET COMPARISON CONDITIONS
+sed '1d' diamonds.csv | awk -F, '$2 > 3.67'
+sed '1d' diamonds.csv | perl -F, -lane 'print if $F[1] > 3.67'
+
+sed '1d' diamonds.csv | awk -F, '($2 > 3.67) && ($3 ~ /P/)'
+sed '1d' diamonds.csv | perl -F, -lane 'print if $F[1] > 3.67 & $F[2] =~ /P/'
+
+sed '1d' diamonds.csv | awk -F, '($2 > 3.67) || ($8 > 18797)'
+sed '1d' diamonds.csv | perl -F, -lane 'print if $F[1] > 3.67 | $F[7] > 18797'
+
+
+## IDENTIFY UNIQUE VALUES IN A COLUMN
+cut -d',' -f3 diamonds.csv | sort -uf | less
+cut -d',' -f3 diamonds.csv | sort | uniq -i | less
+
+
+## CHANGE VALUES IN COLUMN TO NEW VALUES
+sed -i -e 's/Fair/Fair-New/; s/Good/Good-New/; s/Ideal/Ideal-New/; s/Premium/Premium-New/; s/Very Good/Very-Good/' diamonds.csv
+
+perl -i -pe 's/Fair-New/Fair/; s/Good-New/Good/; s/Ideal-New/Ideal/; s/Premium-New/Premium/; s/Very-Good/Very-Good/' diamonds.csv
+
+
+## COUNT THE NUMBER OF ROWS FOR UNIQUE VALUES IN A COLUMN
+grep -v cut diamonds.csv | cut -d',' -f3 | sort | uniq -c | sort -nr
+grep -v cut diamonds.csv | cut -d',' -f3 | sort | uniq -c | sort -nr | awk '{print $2": "$1}'
+
+
+## REORDER COLUMNS
+head -n 2 diamonds.csv
+cat diamonds.csv | awk 'BEGIN {FS=OFS=","} {print $5,$2,$7}' | head
+cat diamonds.csv | awk 'BEGIN {FS=","; OFS="\t"} {print $5,$2,$7}' | head
+
+cat diamonds.csv | perl -F, -lane 'print $F[4], ",", $F[1], ",", $F[6]' | head
+cat diamonds.csv | perl -F, -lane 'print $F[4], "\t", $F[1], "\t", $F[6]' | head
+
+
+## CREATE TWO FILES WITH DIFFERENT ROWS AND SAME COLUMNS
+head -n 1 diamonds.csv > ideal_diamonds.csv
+grep Ideal diamonds.csv >> ideal_diamonds.csv
+
+head -n 1 diamonds.csv > other_diamonds.csv
+grep -v Ideal diamonds.csv >> other_diamonds.csv
+
+
+## CONCATENATE THESE TWO FILES TOP TO BOTTOM (DON'T INCLUDE THE SECOND HEADER ROW)
+cat ideal_diamonds.csv > all_diamonds.csv
+grep -v carat other_diamonds.csv | cat >> all_diamonds.csv
+
+
+## CREATE TWO FILES WITH DIFFERENT COLUMNS AND SAME ROWS
+cut -d',' -f-5 diamonds.csv > diamonds_firstcols.csv
+cut -d',' -f1,6- diamonds.csv > diamonds_secondcols.csv
+
+
+## CONCATENATE THESE TWO FILES SIDE BY SIDE WITH PASTE
+paste -d, diamonds_firstcols.csv diamonds_secondcols.csv > all_cols_paste.csv
+paste -d, diamonds_firstcols.csv diamonds_secondcols.csv | cut -d',' -f1-5,7- > all_cols_paste.csv
+
+
+## CONCATENATE THESE TWO FILES SIDE BY SIDE WITH JOIN
+sort -n diamonds_firstcols.csv -o sorted_diamonds_firstcols.csv
+sort -n diamonds_secondcols.csv -o sorted_diamonds_secondcols.csv
+join -t',' sorted_diamonds_firstcols.csv sorted_diamonds_secondcols.csv > all_cols_join.csv
+
+join -1 1 -2 1 -o '0 1.2 1.3 1.4 1.5 2.2 2.3 2.4 2.5 2.6' -t',' sorted_diamonds_firstcols.csv sorted_diamonds_secondcols.csv > all_cols_join.csv
+
+
+## LOOP OVER LINES IN A FILE ##
+while read line; do echo "${line}"; done < input_files/diamonds.csv
+
+## Filtering Rows
+while IFS=',' read -a line; do if [ ${line[0]} -ge 53930 ]; then perl -le 'print join "\t",@ARGV' "${line[@]}"; fi; done < input_files/diamonds.csv
+
+## Selecting Columns and Filtering Rows
+while IFS=',' read -a line; do if [ ${line[0]} -ge 53930 ]; then perl -le 'print join "\t",@ARGV' "${line[4]}" "${line[3]}" "${line[2]}"; fi; done < input_files/diamonds.csv
+
+
+## LOOP OVER FILES ##
+for filename in input_files/*.csv; do echo "Processing ${filename}"; done
+
+find input_files -type f -name '*.csv' -exec echo "Processing {}" \;
+
+find input_files -type f -name '*.csv' -print0 | parallel -0 echo "Processing {}"
+
+
+
+
+
+
+EXTRA:
+
+## DELETE EMBEDDED COMMAS IN A CSV FILE
+perl -i -pe 's/("[^"]+")/($match = $1) =~ (s#,#-#g); $match;/ge;' diamonds.csv
+
+
+## CREATE COMMA-DELIMITED LIST OF NUMBERS
+- If numbers are in email or Excel, copy the column of numbers
+- Open a Terminal window
+cat > temp
+- Paste the column of asset ids
+1234
+2345
+3456
+4567
+5678
+6789
+- Hit Enter to move to the next line
+- Type 'control+d'
+paste -d, -s temp
+- Copy the comma-delimited list of numbers into your database query
+
+
+## CREATE COMMA-DELIMITED LIST OF SORTED NUMBERS FROM CSV INPUT FILE (DON'T INCLUDE COLUMN HEADING)
+cut -d',' -f1 diamonds.csv | grep -v observation | sort -n | paste -d, -s - | head
+
+
+## FIND ALL FILES IN CURRENT DIRECTORY WITH SPECIFIED STRING IN FILENAME (E.G. diamonds)
+## AND OUTPUT ALL ROWS THAT CONTAIN ANOTHER STRING (E.G. Ideal)
+## -H PRINT THE FILENAME, -n PRINT THE LINE NUMBER, -i IGNORE CASE
+find . -maxdepth 1 -name "*diamonds*" -exec grep -Hni 'Ideal' {} \; > Ideal_diamonds.csv
+
+
+## CONVERT MM/DD/YYYY DATE TO ISO-8601 (YYYY-MM-DD)
+sed 's_\([0-9]\{1,2\}\)/\([0-9]\{1,2\}\)/\([0-9]\{4\}\)_\3-\1-\2_g'
+## CHECK: echo 10/21/1975 | sed 's_\([0-9]\{1,2\}\)/\([0-9]\{1,2\}\)/\([0-9]\{4\}\)_\3-\1-\2_g'
+
+
+## CONVERT DD/MM/YYYY DATE TO ISO-8601 (YYYY-MM-DD)
+sed 's_\([0-9]\{1,2\}\)/\([0-9]\{1,2\}\)/\([0-9]\{4\}\)_\3-\2-\1_g'
+## CHECK: echo 21/10/1995 | sed 's_\([0-9]\{1,2\}\)/\([0-9]\{1,2\}\)/\([0-9]\{4\}\)_\3-\2-\1_g'
+
+
+## COUNT THE NUMBER OF COMMAS (AND THEREFORE COLUMNS) IN A CSV FILE
+## THE NUMBER OF COLUMNS IS THE NUMBER OUTPUT FROM THIS COMMAND + 1
+perl -ne 'print tr/,//, "\n"' < input_file.csv | sort -u

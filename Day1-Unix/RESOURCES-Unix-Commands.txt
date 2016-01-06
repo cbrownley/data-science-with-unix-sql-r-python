@@ -1,0 +1,22 @@
+## UNIX COMMANDS RESOURCES ##
+
+1. Useful Unix Commands
+http://www.tutorialspoint.com/unix/unix-useful-commands.htm
+
+2. Unix Tutorial for Beginners
+http://www.ee.surrey.ac.uk/Teaching/Unix/
+
+3. Thirty Useful Unix Commands
+http://www.ucs.cam.ac.uk/docs/leaflets/u5
+
+4. Basic Unix Commands
+http://mally.stanford.edu/~sr/computing/basic-unix.html
+
+5. 50 Most Frequently Used UNIX / Linux Commands (With Examples)
+http://www.thegeekstuff.com/2010/11/50-linux-commands/
+
+6. Useful commands for the Linux command line
+https://www.howtoforge.com/useful_linux_commands
+
+
+
