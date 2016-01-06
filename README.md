@@ -17,7 +17,7 @@ to download
 
 <b>Windows computer:</b> <br>
 1. Go to: https://github.com/cbrownley/data-science-with-unix-sql-r-python <br>
-2. Click 'Download ZIP' in the lower right hand corner of the page <br>
+2. Click the 'Download ZIP' button in the header bar above the repository's folders and files <br>
 3. Click on the zipped folder to open it in File Explorer <br>
 4. Click 'Extract all' <br>
 5. Edit the path to save the data-science-with-unix-sql-r-python folder on your Desktop <br>
