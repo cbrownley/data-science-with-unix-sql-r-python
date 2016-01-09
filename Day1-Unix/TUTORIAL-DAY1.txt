@@ -161,10 +161,10 @@ join -1 1 -2 1 -o '0 1.2 1.3 1.4 1.5 2.2 2.3 2.4 2.5 2.6' -t',' sorted_diamonds_
 while read line; do echo "${line}"; done < input_files/diamonds.csv
 
 ## Filtering Rows
-while IFS=',' read -a line; do if [ ${line[0]} -ge 53930 ]; then perl -le 'print join "\t",@ARGV' "${line[@]}"; fi; done < input_files/diamonds.csv
+while IFS=',' read -a line; do if [[ ${line[0]} -ge 53930 ]]; then perl -le 'print join "\t",@ARGV' "${line[@]}"; fi; done < input_files/diamonds.csv
 
 ## Selecting Columns and Filtering Rows
-while IFS=',' read -a line; do if [ ${line[0]} -ge 53930 ]; then perl -le 'print join "\t",@ARGV' "${line[4]}" "${line[3]}" "${line[2]}"; fi; done < input_files/diamonds.csv
+while IFS=',' read -a line; do if [[ ${line[0]} -ge 53930 ]]; then perl -le 'print join "\t",@ARGV' "${line[4]}" "${line[3]}" "${line[2]}"; fi; done < input_files/diamonds.csv
 
 
 ## LOOP OVER FILES ##

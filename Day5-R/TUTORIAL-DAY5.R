@@ -154,7 +154,7 @@ mydata <- read.table("c:/mydata.csv", header=TRUE, sep=",", row.names="id")
 setwd("~/Documents/Data-Science-with-Unix-SQL-R-Python/Day5-R")
 air_quality <- read.table("input_files/airquality.csv", header=TRUE, sep=",", row.names="observation")
 head(air_quality)
-
+dim(air_quality)
 
 write.table(air_quality, "output_files/airquality.tsv", sep="\t")
 
